@@ -27,4 +27,21 @@ class ManiobrasTrenesTest extends AnyFunSuite {
     assert(resultado.head == estadoInicial)
     assert(resultado.last._1.size == 0)
   }
+  test("Pruebas medianas: 500 vagones y 500 movimientos") {
+    val estadoInicial: Estado = (List.range(1, 501), Nil, Nil)
+    val movimientos: List[Movimiento] = List.fill(250)(Uno(2)) ++ List.fill(250)(Dos(-1))
+    val resultado = aplicarMovimientos(estadoInicial, movimientos)
+    assert(resultado.size == 501)
+    assert(resultado.head == estadoInicial)
+    assert(resultado.last._1.size == 0)
+  }
+
+  test("Pruebas grandes: 1000 vagones y 1000 movimientos") {
+    val estadoInicial: Estado = (List.range(1, 1001), Nil, Nil)
+    val movimientos: List[Movimiento] = List.fill(500)(Uno(2)) ++ List.fill(500)(Dos(-1))
+    val resultado = aplicarMovimientos(estadoInicial, movimientos)
+    assert(resultado.size == 1001)
+    assert(resultado.head == estadoInicial)
+    assert(resultado.last._1.size == 0)
+  }
 }

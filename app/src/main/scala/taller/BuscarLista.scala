@@ -50,4 +50,54 @@ object ManiobrasTrenes {
 
     aplicarMovimientosAux(movs, List(e))
   }
+
+  def definirManiobra(t1: Tren, t2: Tren): Maniobra = {
+    @annotation.tailrec
+    def buscarSolucion(estadosPorExplorar: List[(Estado, Maniobra)], explorados: Set[Estado]): Maniobra = {
+      if (estadosPorExplorar.isEmpty) {
+        Nil
+      } else {
+        val ((estadoActual, movimientos), resto) = (estadosPorExplorar.head, estadosPorExplorar.tail)
+        val (principal, uno, dos) = estadoActual
+
+        if (principal == t2 && uno.isEmpty && dos.isEmpty) {
+          movimientos.reverse
+        } else if (explorados.contains(estadoActual)) {
+          buscarSolucion(resto, explorados) // Estado ya explorado
+        } else {
+
+          val nuevosMovimientos = for {
+            movimiento <- generarMovimientosPosibles(estadoActual)
+            nuevoEstado = aplicarMovimiento(estadoActual, movimiento)
+            if !explorados.contains(nuevoEstado)
+          } yield (nuevoEstado, movimiento :: movimientos)
+
+          buscarSolucion(resto ++ nuevosMovimientos, explorados + estadoActual)
+        }
+      }
+    }
+
+    def generarMovimientosPosibles(estado: Estado): List[Movimiento] = {
+      val (principal, uno, dos) = estado
+
+      (for {
+        n <- 1 to principal.length
+        if n <= principal.length
+      } yield Uno(n)).toList :::
+        (for {
+          n <- 1 to principal.length
+          if n <= principal.length
+        } yield Dos(n)).toList :::
+        (for {
+          n <- 1 to uno.length
+          if n <= uno.length
+        } yield Uno(-n)).toList :::
+        (for {
+          n <- 1 to dos.length
+          if n <= dos.length
+        } yield Dos(-n)).toList
+    }
+
+    buscarSolucion(List(((t1, Nil, Nil), Nil)), Set.empty)
+  }
 }
