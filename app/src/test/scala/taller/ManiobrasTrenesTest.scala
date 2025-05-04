@@ -44,4 +44,59 @@ class ManiobrasTrenesTest extends AnyFunSuite {
     assert(resultado.head == estadoInicial)
     assert(resultado.last._1.size == 0)
   }
+  // Pruebas para definirManiobra
+  test("Definir maniobra para lista vacía") {
+    val t1: Tren = Nil
+    val t2: Tren = Nil
+    val movimientos = definirManiobra(t1, t2)
+    assert(movimientos.isEmpty)
+  }
+
+  test("Definir maniobra para lista con un elemento") {
+    val t1: Tren = List(1)
+    val t2: Tren = List(1)
+    val movimientos = definirManiobra(t1, t2)
+    assert(movimientos.isEmpty)
+  }
+
+  test("Definir maniobra genera movimientos correctos (caso simple)") {
+    val t1: Tren = List(1, 2, 3)
+    val t2: Tren = List(3, 2, 1)
+    val movimientos = definirManiobra(t1, t2)
+    val estados = aplicarMovimientos((t1, Nil, Nil), movimientos)
+    assert(estados.last == (t2, Nil, Nil))
+  }
+
+  test("Definir maniobra genera movimientos correctos (caso complejo)") {
+    val t1: Tren = List('a', 'b', 'c', 'd')
+    val t2: Tren = List('d', 'b', 'c', 'a')
+    val movimientos = definirManiobra(t1, t2)
+    val estados = aplicarMovimientos((t1, Nil, Nil), movimientos)
+    assert(estados.last == (t2, Nil, Nil))
+  }
+
+  // Pruebas adicionales para aplicarMovimiento
+  test("Aplicar movimiento Uno positivo") {
+    val estado = (List(1, 2, 3), Nil, Nil)
+    val nuevoEstado = aplicarMovimiento(estado, Uno(2))
+    assert(nuevoEstado == (List(1), List(2, 3), Nil))
+  }
+
+  test("Aplicar movimiento Uno negativo") {
+    val estado = (List(1), List(2, 3), Nil)
+    val nuevoEstado = aplicarMovimiento(estado, Uno(-1))
+    assert(nuevoEstado == (List(1, 2), List(3), Nil))
+  }
+
+  test("Aplicar movimiento Dos positivo") {
+    val estado = (List(1, 2, 3), Nil, Nil)
+    val nuevoEstado = aplicarMovimiento(estado, Dos(1))
+    assert(nuevoEstado == (List(1, 2), Nil, List(3)))
+  }
+
+  test("Aplicar movimiento Dos negativo") {
+    val estado = (List(1), Nil, List(2, 3))
+    val nuevoEstado = aplicarMovimiento(estado, Dos(-1))
+    assert(nuevoEstado == (List(1, 2), Nil, List(3)))
+  }
 }
